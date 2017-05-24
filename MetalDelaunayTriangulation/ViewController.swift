@@ -23,6 +23,8 @@ class ViewController: UIViewController, MetalViewSpecialDelegate {
     }
   }
   
+  var deulanay: MTKViewDelaunayTriangulation!
+  
   //weak var ViewControllerDelegate:ViewControllerDelegate?
   
   
@@ -57,6 +59,8 @@ class ViewController: UIViewController, MetalViewSpecialDelegate {
 
     fpsLabel.textColor = UIColor.white
     view.addSubview(fpsLabel)
+    
+    
     
     
     mtkView.metalViewSpecialDelegate = self 
@@ -110,6 +114,7 @@ class ViewController: UIViewController, MetalViewSpecialDelegate {
       let x = Float(Double.random(-1.0, 1.0))
       let y = Float(Double.random(-1.0, 1.0))
       let v = VertexWithColor(x: x, y: y, z: 0.0, r: Float(Double.random()), g: Float(Double.random()), b: Float(Double.random()), a: 0.0)
+      
       verticesWithColorArray.append(v)
     }
     
@@ -145,7 +150,10 @@ class ViewController: UIViewController, MetalViewSpecialDelegate {
     // compute buffer size needed for generated vertices
  
     let vertexCount = verticesWithColorArray.count
-    let dataSize = vertexCount * MemoryLayout.size(ofValue: verticesWithColorArray[0]) // size of the vertex data in bytes
+    //let dataSize = vertexCount * MemoryLayout.size(ofValue: verticesWithColorArray[0]) // size of the vertex data in bytes
+    let dataSize = vertexCount * MemoryLayout<VertexWithColor>.size // size of the vertex data in bytes
+    
+    
     vertexBuffer = device.makeBuffer(bytes: verticesWithColorArray, length: dataSize, options: []) // create a new buffer on the GPU
 
     
