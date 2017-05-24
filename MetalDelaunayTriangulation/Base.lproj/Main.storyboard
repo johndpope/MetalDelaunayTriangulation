@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="ipad9_7" orientation="landscape">
         <adaptation id="fullscreen"/>
     </device>
@@ -20,22 +20,8 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <mtkView contentMode="scaleToFill" colorPixelFormat="BGRA8Unorm" depthStencilPixelFormat="Depth32Float" translatesAutoresizingMaskIntoConstraints="NO" id="S3h-z7-cAx" customClass="MetalViewSpecial" customModule="MetalDelaunayTriangulation" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
-                            </mtkView>
-                        </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <constraints>
-                            <constraint firstItem="S3h-z7-cAx" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="CNa-Uo-2lb"/>
-                            <constraint firstItem="S3h-z7-cAx" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="gH6-JX-0rK"/>
-                            <constraint firstItem="S3h-z7-cAx" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" id="ol8-Xb-Wkf"/>
-                            <constraint firstItem="S3h-z7-cAx" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="w6d-Xd-ZvC"/>
-                        </constraints>
                     </view>
-                    <connections>
-                        <outlet property="mtkView" destination="S3h-z7-cAx" id="GwY-QH-mfa"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
