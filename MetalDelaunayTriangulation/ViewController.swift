@@ -12,7 +12,7 @@ class ViewController: UIViewController, MTKViewDelaunayTriangulationDelegate {
   
   var delaunayView: MTKViewDelaunayTriangulation!
   
-  let fpsLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 400, height: 20))
+  let fpsLabel = UILabel(frame: CGRect(x: 0, y: 20, width: 400, height: 20))
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -23,7 +23,7 @@ class ViewController: UIViewController, MTKViewDelaunayTriangulationDelegate {
     delaunayView.MTKViewDelaunayTriangulationDelegate = self
     view.addSubview(delaunayView)
     
-    fpsLabel.textColor = UIColor.white
+    fpsLabel.textColor = UIColor.red
     view.addSubview(fpsLabel)
     
   }
@@ -45,8 +45,10 @@ class ViewController: UIViewController, MTKViewDelaunayTriangulationDelegate {
       let touchPoint = touch.location(in: view)
       print ("...touch \(touchPoint)")
       
-      delaunayView.setupTriangles()
-      delaunayView.renderTriangles()
+      autoreleasepool {
+        delaunayView.setupTriangles()
+        delaunayView.renderTriangles()
+      }
     }
   }
   

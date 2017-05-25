@@ -9,6 +9,7 @@
 
 import Metal
 import MetalKit
+import GameplayKit
 
 protocol MTKViewDelaunayTriangulationDelegate: NSObjectProtocol{  
   func fpsUpdate (fps: Int)
@@ -37,35 +38,31 @@ class MTKViewDelaunayTriangulation: MTKView {
   ////////////////////
   init(frame: CGRect) {
 
-    vertexCount = 100
-    verticesMemoryByteSize = vertexCount * MemoryLayout<VertexWithColor>.size
-
+    vertexCount = 100000
+    //verticesMemoryByteSize = vertexCount * MemoryLayout<VertexWithColor>.size
+    verticesMemoryByteSize = vertexCount * MemoryLayout<VertexWithColor>.stride // apple recommendation
     super.init(frame: frame, device: MTLCreateSystemDefaultDevice())
     
     setupMetal()
-    setupTriangles()
-    renderTriangles()
+    //setupTriangles()
+    //renderTriangles()
   }
   
   required init(coder aDecoder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
   
-  /*
-  override func draw() {
-    step() // needed to update frame counter
-    
-    setupTriangles()
-    renderTriangles()
-  }*/
   
   override func draw(_ rect: CGRect) {
     
     step() // needed to update frame counter
+    
     autoreleasepool {
       setupTriangles()
       renderTriangles()
+      
     }
+    
   }
   
 
@@ -79,7 +76,7 @@ class MTKViewDelaunayTriangulation: MTKView {
     {
       let frametime = (CFAbsoluteTimeGetCurrent() - frameStartTime) / 100
       MTKViewDelaunayTriangulationDelegate?.fpsUpdate(fps: Int(1 / frametime)) // let the delegate know of the frame update
-      //print ("...frametime: \(frametime)")
+      print ("...frametime: \((Int(1/frametime)))")
       frameStartTime = CFAbsoluteTimeGetCurrent() // reset start time
       frameCounter = 0 // reset counter
     }
@@ -135,6 +132,40 @@ class MTKViewDelaunayTriangulation: MTKView {
 
   } // end of setupMetal
   
+  /// Generate set of vertices for our triangulation to use
+  func generateVertices(_ size: CGSize, cellSize: CGFloat, variance: CGFloat = 0.75, seed: UInt64 = numericCast(arc4random())) -> [Vertex] {
+    
+    // How many cells we're going to have on each axis (pad by 2 cells on each edge)
+    let cellsX = (size.width + 4 * cellSize) / cellSize
+    let cellsY = (size.height + 4 * cellSize) / cellSize
+    
+    // figure out the bleed widths to center the grid
+    let bleedX = ((cellsX * cellSize) - size.width)/2
+    let bleedY = ((cellsY * cellSize) - size.height)/2
+    
+    let _variance = cellSize * variance / 4
+    
+    var points = [Vertex]()
+    let minX = -bleedX
+    let maxX = size.width + bleedX
+    let minY = -bleedY
+    let maxY = size.height + bleedY
+    
+    let generator = GKLinearCongruentialRandomSource(seed: seed)
+    
+    for i in stride(from: minX, to: maxX, by: cellSize) {
+      for j in stride(from: minY, to: maxY, by: cellSize) {
+        
+        let x = i + cellSize/2 + CGFloat(generator.nextUniform()) + CGFloat.random(-_variance, _variance)
+        let y = j + cellSize/2 + CGFloat(generator.nextUniform()) + CGFloat.random(-_variance, _variance)
+        
+        points.append(Vertex(x: Double(x), y: Double(y)))
+      }
+    }
+    
+    return points
+  } // end of generateVertices
+  
   func setupTriangles(){
     /*
      // create a single triangle
@@ -147,9 +178,11 @@ class MTKViewDelaunayTriangulation: MTKView {
      let vertexCount = verticesWithColorArray.count
      */
     
+    
     // generate n random triangles
     ///////////////////
     verticesWithColorArray = [] // empty out vertex array
+    
     for _ in 0 ... vertexCount {
       //for vertex in vertices {
       let x = Float(Double.random(-1.0, 1.0))
@@ -157,40 +190,44 @@ class MTKViewDelaunayTriangulation: MTKView {
       let v = VertexWithColor(x: x, y: y, z: 0.0, r: Float(Double.random()), g: Float(Double.random()), b: Float(Double.random()), a: 0.0)
       
       verticesWithColorArray.append(v)
-    }
+    } // end of for _ in
+ 
     
     /*
-     // create n deulanay triangles
-     ///////////////////
-     let vertices = generateVertices(mtkView.bounds.size, cellSize: 100)
-     let triangles = Delaunay().triangulate(vertices)
-     var verticesWithColorArray = [VertexWithColor]()
-     
-     for triangle in triangles {
-     // convert triangle vertices from device units to metal units
-     let x1 = Float(triangle.vertex1.x)/Float(mtkView.bounds.size.width)*2.0 - 1.0
-     let x2 = Float(triangle.vertex2.x)/Float(mtkView.bounds.size.width)*2.0 - 1.0
-     let x3 = Float(triangle.vertex3.x)/Float(mtkView.bounds.size.width)*2.0 - 1.0
-     
-     let y1 = Float(triangle.vertex1.y)/Float(mtkView.bounds.size.height)*2.0 - 1.0
-     let y2 = Float(triangle.vertex2.y)/Float(mtkView.bounds.size.height)*2.0 - 1.0
-     let y3 = Float(triangle.vertex3.y)/Float(mtkView.bounds.size.height)*2.0 - 1.0
-     
-     let v1 = VertexWithColor(x: x1, y: y1, z: 0.0, r: 1.0, g: 0.0, b: 0.0, a: 0.0)
-     let v2 = VertexWithColor(x: x2, y: y2, z: 0.0, r: 0.0, g: 1.0, b: 0.0, a: 0.0)
-     let v3 = VertexWithColor(x: x3, y: y3, z: 0.0, r: 0.0, g: 0.0, b: 1.0, a: 0.0)
-     
-     verticesWithColorArray.append(v1)
-     verticesWithColorArray.append(v2)
-     verticesWithColorArray.append(v3)
-     }
-     */
+    // create n deulanay triangles
+    ///////////////////
+    let vertices = generateVertices(self.bounds.size, cellSize: 100)
+    let triangles = Delaunay().triangulate(vertices)
+    verticesWithColorArray = [] // empty out vertex array
+    
+    for triangle in triangles {
+      // convert triangle vertices from device units to metal units
+      let x1 = Float(triangle.vertex1.x)/Float(self.bounds.size.width)*2.0 - 1.0
+      let x2 = Float(triangle.vertex2.x)/Float(self.bounds.size.width)*2.0 - 1.0
+      let x3 = Float(triangle.vertex3.x)/Float(self.bounds.size.width)*2.0 - 1.0
+      
+      let y1 = Float(triangle.vertex1.y)/Float(self.bounds.size.height)*2.0 - 1.0
+      let y2 = Float(triangle.vertex2.y)/Float(self.bounds.size.height)*2.0 - 1.0
+      let y3 = Float(triangle.vertex3.y)/Float(self.bounds.size.height)*2.0 - 1.0
+      
+      let v1 = VertexWithColor(x: x1, y: y1, z: 0.0, r: 1.0, g: 0.0, b: 0.0, a: 0.0)
+      let v2 = VertexWithColor(x: x2, y: y2, z: 0.0, r: 0.0, g: 1.0, b: 0.0, a: 0.0)
+      let v3 = VertexWithColor(x: x3, y: y3, z: 0.0, r: 0.0, g: 0.0, b: 1.0, a: 0.0)
+      
+      verticesWithColorArray.append(v1)
+      verticesWithColorArray.append(v2)
+      verticesWithColorArray.append(v3)
+    } // end of for triangles
+    vertexCount = verticesWithColorArray.count
+    */
+ 
     
   } // end of setupTriangles
   
   func renderTriangles(){
     // 6. Set buffer size of objects to be drawn
-    let dataSize = vertexCount * MemoryLayout<VertexWithColor>.size // size of the vertex data in bytes
+    //let dataSize = vertexCount * MemoryLayout<VertexWithColor>.size // size of the vertex data in bytes
+    let dataSize = vertexCount * MemoryLayout<VertexWithColor>.stride // apple recommendation
     let vertexBuffer: MTLBuffer = device!.makeBuffer(bytes: verticesWithColorArray, length: dataSize, options: []) // create a new buffer on the GPU
     let renderPassDescriptor: MTLRenderPassDescriptor? = self.currentRenderPassDescriptor
     
@@ -207,7 +244,8 @@ class MTKViewDelaunayTriangulation: MTKView {
       renderCommandEncoder?.setRenderPipelineState(renderPipeline!)
       renderCommandEncoder?.setVertexBuffer(vertexBuffer, offset: 0, at: 0)
       // most important below: we tell the GPU to draw a set of triangles, based on the vertex buffer. Each triangle consists of three vertices, starting at index 0 inside the vertex buffer, and there are vertexCount/3 triangles total
-      renderCommandEncoder?.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: vertexCount, instanceCount: vertexCount/3)
+      //renderCommandEncoder?.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: vertexCount, instanceCount: vertexCount/3)
+      renderCommandEncoder?.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: vertexCount)
       
       ///////////renderCommandEncoder?.popDebugGroup()
       renderCommandEncoder?.endEncoding() // finalize renderEncoder set up
