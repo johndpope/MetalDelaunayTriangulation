@@ -21,9 +21,13 @@ class ViewController: UIViewController, MTKViewDelaunayTriangulationDelegate {
     
     delaunayView = MTKViewDelaunayTriangulation(frame: UIScreen.main.bounds)
     delaunayView.MTKViewDelaunayTriangulationDelegate = self
+    
+    delaunayView.enableSetNeedsDisplay = true // needed so we can call setNeedsDisplay() locally to force a display update
+    delaunayView.isPaused = true  // may not be needed, as the enableSetNeedsDisplay flag above seems to pause screen activity upon start anyway
+    
     view.addSubview(delaunayView)
     
-    fpsLabel.textColor = UIColor.red
+    fpsLabel.textColor = UIColor.yellow
     view.addSubview(fpsLabel)
     
   }
@@ -43,14 +47,24 @@ class ViewController: UIViewController, MTKViewDelaunayTriangulationDelegate {
   override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
     if let touch = touches.first  {
       let touchPoint = touch.location(in: view)
-      print ("...touch \(touchPoint)")
+      //print ("...touch \(touchPoint)")
+      delaunayView.vertexAppend(point: touchPoint)
+      delaunayView.delaunayCompute()
+      delaunayView.setNeedsDisplay()
       
-      autoreleasepool {
-        delaunayView.setupTriangles()
-        delaunayView.renderTriangles()
-      }
-    }
-  }
+    } // end of if let touch
+  } // end of func touchesBegan()
+  
+  override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+    if let touch = touches.first  {
+      let touchPoint = touch.location(in: view)
+      //print ("...touch \(touchPoint)")
+      delaunayView.vertexAppend(point: touchPoint)
+      delaunayView.delaunayCompute()
+      delaunayView.setNeedsDisplay()
+      
+    } // end if if let touch
+  } // end of func touchesMoved()
   
   
   func fpsUpdate(fps: Int) {
