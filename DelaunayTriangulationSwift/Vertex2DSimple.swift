@@ -1,25 +1,26 @@
 //
-//  Vertex.swift
+//  Vertex2DSimple.swift
 //  DelaunayTriangulationSwift
 //
 //  Created by Alex Littlejohn on 2016/01/08.
 //  Copyright © 2016 zero. All rights reserved.
 //
+import UIKit
 
-public struct Vertex {
+public struct Vertex2DSimple {
     
-    public init(x: Double, y: Double) {
+    public init(x: CGFloat, y: CGFloat) {
         self.x = x
         self.y = y
     }
     
-    public let x: Double
-    public let y: Double
+    public let x: CGFloat
+    public let y: CGFloat
 }
 
-extension Vertex: Equatable { }
+extension Vertex2DSimple: Equatable { }
 
-public func ==(lhs: Vertex, rhs: Vertex) -> Bool {
+public func ==(lhs: Vertex2DSimple, rhs: Vertex2DSimple) -> Bool {
     return lhs.x == rhs.x && lhs.y == rhs.y
 }
 
@@ -37,7 +38,7 @@ extension Array where Element:Equatable {
     }
 }
 
-extension Vertex: Hashable {
+extension Vertex2DSimple: Hashable {
     public var hashValue: Int {
         return "\(x)\(y)".hashValue
     }

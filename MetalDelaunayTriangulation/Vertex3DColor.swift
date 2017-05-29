@@ -6,7 +6,7 @@
 //  Copyright © 2017 vladimir sierra. All rights reserved.
 //
 
-struct VertexWithColor{
+struct Vertex3DColor{
   
   var x,y,z: Float     // position data
   var r,g,b,a: Float   // color data

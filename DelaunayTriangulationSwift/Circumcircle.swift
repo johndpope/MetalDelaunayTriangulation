@@ -7,11 +7,13 @@
 //
 
 /// Represents a bounding circle for a set of 3 vertices
+import UIKit
+
 internal struct Circumcircle {
-    let vertex1: Vertex
-    let vertex2: Vertex
-    let vertex3: Vertex
-    let x: Double
-    let y: Double
-    let rsqr: Double
+    let vertex1: Vertex2DSimple
+    let vertex2: Vertex2DSimple
+    let vertex3: Vertex2DSimple
+    let x: CGFloat
+    let y: CGFloat
+    let rsqr: CGFloat
 }

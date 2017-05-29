@@ -9,8 +9,8 @@
 import UIKit
 
 struct Edge {
-    let vertex1: Vertex
-    let vertex2: Vertex
+    let vertex1: Vertex2DSimple
+    let vertex2: Vertex2DSimple
 }
 
 extension Edge: Equatable {}

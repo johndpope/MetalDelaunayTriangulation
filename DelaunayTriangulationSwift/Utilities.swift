@@ -28,7 +28,7 @@ extension Triangle {
     }
 }
 
-extension Vertex {
+extension Vertex2DSimple {
     func pointValue() -> CGPoint {
         return CGPoint(x: x, y: y)
     }

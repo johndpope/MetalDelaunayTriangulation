@@ -22,8 +22,8 @@ class ViewController: UIViewController, MTKViewDelaunayTriangulationDelegate {
     delaunayView = MTKViewDelaunayTriangulation(frame: UIScreen.main.bounds)
     delaunayView.MTKViewDelaunayTriangulationDelegate = self
     
-    delaunayView.enableSetNeedsDisplay = true // needed so we can call setNeedsDisplay() locally to force a display update
-    delaunayView.isPaused = true  // may not be needed, as the enableSetNeedsDisplay flag above seems to pause screen activity upon start anyway
+    //delaunayView.enableSetNeedsDisplay = true // needed so we can call setNeedsDisplay() locally to force a display update
+    //delaunayView.isPaused = true  // may not be needed, as the enableSetNeedsDisplay flag above seems to pause screen activity upon start anyway
     
     view.addSubview(delaunayView)
     
@@ -44,12 +44,15 @@ class ViewController: UIViewController, MTKViewDelaunayTriangulationDelegate {
     
   }
   
+  /*
   override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
     if let touch = touches.first  {
       let touchPoint = touch.location(in: view)
-      //print ("...touch \(touchPoint)")
-      delaunayView.vertexAppend(point: touchPoint)
-      delaunayView.delaunayCompute()
+      print ("...touch \(touchPoint)")
+      
+      //delaunayView.vertexAppend(point: touchPoint)
+      delaunayView.setupTrianglesRandom(triangleCount: 50000)
+      //delaunayView.delaunayCompute()
       delaunayView.setNeedsDisplay()
       
     } // end of if let touch
@@ -59,16 +62,19 @@ class ViewController: UIViewController, MTKViewDelaunayTriangulationDelegate {
     if let touch = touches.first  {
       let touchPoint = touch.location(in: view)
       //print ("...touch \(touchPoint)")
-      delaunayView.vertexAppend(point: touchPoint)
-      delaunayView.delaunayCompute()
+      
+      //delaunayView.vertexAppend(point: touchPoint)
+      
+      //delaunayView.delaunayCompute()
       delaunayView.setNeedsDisplay()
       
     } // end if if let touch
   } // end of func touchesMoved()
+  */
   
   
-  func fpsUpdate(fps: Int) {
-    let description = "fps: \(Int(fps))"
+  func fpsUpdate(fps: Int, triangleCount: Int) {
+    let description = "fps: \(Int(fps)), triangles: \(triangleCount))"
     
     DispatchQueue.main.async
       {

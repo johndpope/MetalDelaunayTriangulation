@@ -6,18 +6,19 @@
 //  Copyright © 2016 zero. All rights reserved.
 //
 
-import Darwin
+//import Darwin
+import UIKit
 
 open class Delaunay {
     
     public init() { }
     
     /* Generates a supertraingle containing all other triangles */
-    fileprivate func supertriangle(_ vertices: [Vertex]) -> [Vertex] {
-        var xmin = Double(Int32.max)
-        var ymin = Double(Int32.max)
-        var xmax = -Double(Int32.max)
-        var ymax = -Double(Int32.max)
+    fileprivate func supertriangle(_ vertices: [Vertex2DSimple]) -> [Vertex2DSimple] {
+        var xmin = CGFloat(Int32.max)
+        var ymin = CGFloat(Int32.max)
+        var xmax = -CGFloat(Int32.max)
+        var ymax = -CGFloat(Int32.max)
         
         for i in 0..<vertices.count {
             if vertices[i].x < xmin { xmin = vertices[i].x }
@@ -33,33 +34,35 @@ open class Delaunay {
         let ymid = ymin + dy * 0.5
         
         return [
-            Vertex(x: xmid - 20 * dmax, y: ymid - dmax),
-            Vertex(x: xmid, y: ymid + 20 * dmax),
-            Vertex(x: xmid + 20 * dmax, y: ymid - dmax)
+            Vertex2DSimple(x: xmid - 20 * dmax, y: ymid - dmax),
+            Vertex2DSimple(x: xmid, y: ymid + 20 * dmax),
+            Vertex2DSimple(x: xmid + 20 * dmax, y: ymid - dmax)
         ]
     }
     
     /* Calculate a circumcircle for a set of 3 vertices */
-    fileprivate func circumcircle(_ i: Vertex, j: Vertex, k: Vertex) -> Circumcircle {
+    fileprivate func circumcircle(_ i: Vertex2DSimple, j: Vertex2DSimple, k: Vertex2DSimple) -> Circumcircle {
         let x1 = i.x
         let y1 = i.y
         let x2 = j.x
         let y2 = j.y
         let x3 = k.x
         let y3 = k.y
-        let xc: Double
-        let yc: Double
+        let xc: CGFloat
+        let yc: CGFloat
         
         let fabsy1y2 = abs(y1 - y2)
         let fabsy2y3 = abs(y2 - y3)
-        
-        if fabsy1y2 < DBL_EPSILON {
+
+      //if fabsy1y2 < DBL_EPSILON {
+        if fabsy1y2 < CGFloat.ulpOfOne {
             let m2 = -((x3 - x2) / (y3 - y2))
             let mx2 = (x2 + x3) / 2
             let my2 = (y2 + y3) / 2
             xc = (x2 + x1) / 2
             yc = m2 * (xc - mx2) + my2
-        } else if fabsy2y3 < DBL_EPSILON {
+        //} else if fabsy2y3 < DBL_EPSILON {//
+        } else if fabsy2y3 < CGFloat.ulpOfOne {
             let m1 = -((x2 - x1) / (y2 - y1))
             let mx1 = (x1 + x2) / 2
             let my1 = (y1 + y2) / 2
@@ -88,10 +91,10 @@ open class Delaunay {
         return Circumcircle(vertex1: i, vertex2: j, vertex3: k, x: xc, y: yc, rsqr: rsqr)
     }
     
-    fileprivate func dedup(_ edges: [Vertex]) -> [Vertex] {
+    fileprivate func dedup(_ edges: [Vertex2DSimple]) -> [Vertex2DSimple] {
         
         var e = edges
-        var a: Vertex?, b: Vertex?, m: Vertex?, n: Vertex?
+        var a: Vertex2DSimple?, b: Vertex2DSimple?, m: Vertex2DSimple?, n: Vertex2DSimple?
         
         var j = e.count
         while j > 0 {
@@ -118,7 +121,7 @@ open class Delaunay {
         return e
     }
     
-    open func triangulate(_ vertices: [Vertex]) -> [Triangle] {
+    open func triangulate(_ vertices: [Vertex2DSimple]) -> [Triangle] {
         
         var _vertices = vertices.removeDuplicates()
         
@@ -129,7 +132,7 @@ open class Delaunay {
         let n = _vertices.count
         var open = [Circumcircle]()
         var completed = [Circumcircle]()
-        var edges = [Vertex]()
+        var edges = [Vertex2DSimple]()
         
         /* Make an array of indices into the vertex array, sorted by the
         * vertices' x-position. */
@@ -168,8 +171,8 @@ open class Delaunay {
                 
                 /* If we're outside the circumcircle, skip this triangle. */
                 let dy = _vertices[c].y - open[j].y
-                
-                if dx * dx + dy * dy - open[j].rsqr > DBL_EPSILON {
+                //if dx * dx + dy * dy - open[j].rsqr > DBL_EPSILON {
+                if dx * dx + dy * dy - open[j].rsqr > CGFloat.ulpOfOne {
                     continue
                 }
                 
@@ -209,11 +212,11 @@ open class Delaunay {
         * building a list of triplets that represent triangles. */
         completed += open
         
-        let ignored: Set<Vertex> = [_vertices[n], _vertices[n + 1], _vertices[n + 2]]
+        let ignored: Set<Vertex2DSimple> = [_vertices[n], _vertices[n + 1], _vertices[n + 2]]
         
         let results = completed.flatMap { (circumCircle) -> Triangle? in
             
-            let current: Set<Vertex> = [circumCircle.vertex1, circumCircle.vertex2, circumCircle.vertex3]
+            let current: Set<Vertex2DSimple> = [circumCircle.vertex1, circumCircle.vertex2, circumCircle.vertex3]
             let intersection = ignored.intersection(current)
             if intersection.count > 0 {
                 return nil
