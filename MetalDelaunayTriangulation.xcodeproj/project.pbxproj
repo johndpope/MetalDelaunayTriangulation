@@ -17,7 +17,7 @@
 		E7D7CB621ECF85890025423F /* MetalDelaunayTriangulationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D7CB611ECF85890025423F /* MetalDelaunayTriangulationTests.swift */; };
 		E7D7CB6D1ECF85890025423F /* MetalDelaunayTriangulationUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D7CB6C1ECF85890025423F /* MetalDelaunayTriangulationUITests.swift */; };
 		E7D7CB821ECF893E0025423F /* Circumcircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D7CB7B1ECF893E0025423F /* Circumcircle.swift */; };
-		E7D7CB831ECF893E0025423F /* DelaunaySwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D7CB7D1ECF893E0025423F /* DelaunaySwift.swift */; };
+		E7D7CB831ECF893E0025423F /* Delaunay.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D7CB7D1ECF893E0025423F /* Delaunay.swift */; };
 		E7D7CB841ECF893E0025423F /* Edge.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D7CB7E1ECF893E0025423F /* Edge.swift */; };
 		E7D7CB851ECF893E0025423F /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E7D7CB7F1ECF893E0025423F /* Info.plist */; };
 		E7D7CB861ECF893E0025423F /* Triangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D7CB801ECF893E0025423F /* Triangle.swift */; };
@@ -60,7 +60,7 @@
 		E7D7CB6C1ECF85890025423F /* MetalDelaunayTriangulationUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalDelaunayTriangulationUITests.swift; sourceTree = "<group>"; };
 		E7D7CB6E1ECF85890025423F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E7D7CB7B1ECF893E0025423F /* Circumcircle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Circumcircle.swift; sourceTree = "<group>"; };
-		E7D7CB7D1ECF893E0025423F /* DelaunaySwift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DelaunaySwift.swift; sourceTree = "<group>"; };
+		E7D7CB7D1ECF893E0025423F /* Delaunay.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Delaunay.swift; sourceTree = "<group>"; };
 		E7D7CB7E1ECF893E0025423F /* Edge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Edge.swift; sourceTree = "<group>"; };
 		E7D7CB7F1ECF893E0025423F /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E7D7CB801ECF893E0025423F /* Triangle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Triangle.swift; sourceTree = "<group>"; };
@@ -153,7 +153,7 @@
 			isa = PBXGroup;
 			children = (
 				E7D7CB7B1ECF893E0025423F /* Circumcircle.swift */,
-				E7D7CB7D1ECF893E0025423F /* DelaunaySwift.swift */,
+				E7D7CB7D1ECF893E0025423F /* Delaunay.swift */,
 				E7D7CB7E1ECF893E0025423F /* Edge.swift */,
 				E7D7CB7F1ECF893E0025423F /* Info.plist */,
 				E7D7CB801ECF893E0025423F /* Triangle.swift */,
@@ -304,7 +304,7 @@
 				7DA7A6591ED0EC34008C3157 /* MTKViewDelaunayTriangulation.swift in Sources */,
 				E7D7CB821ECF893E0025423F /* Circumcircle.swift in Sources */,
 				E790EF361ECFC2A600921411 /* Vertex3DColor.swift in Sources */,
-				E7D7CB831ECF893E0025423F /* DelaunaySwift.swift in Sources */,
+				E7D7CB831ECF893E0025423F /* Delaunay.swift in Sources */,
 				E7D7CB861ECF893E0025423F /* Triangle.swift in Sources */,
 				E7D7CB841ECF893E0025423F /* Edge.swift in Sources */,
 				E7D7CB871ECF893E0025423F /* Vertex2DSimple.swift in Sources */,

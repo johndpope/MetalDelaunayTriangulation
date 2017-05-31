@@ -25,6 +25,7 @@ class MTKViewDelaunayTriangulation: MTKView {
   
   var vertexCloud3DColor : [Vertex3DColor]!
   var vertexCloud2D: [Vertex2DSimple]!
+  var delaunayTriangles: [Triangle]!
   var triangleCount: Int = 0
   //var vertexCount: Int
   //var verticesMemoryByteSize:Int
@@ -59,7 +60,7 @@ class MTKViewDelaunayTriangulation: MTKView {
       // call a generation routine (such as setupTrianglesRandom() AND, we must take care
       // to set the view's .enableSetNeedsDisplay = true  and .isPaused = true
       //setupTrianglesRandom(numTriangles: 10000)
-      setupTrianglesDelaunay(vertexCount: 10000)
+      //setupTrianglesDelaunay(vertexCount: 1000)
       
       // regardless of whether we are updating manually via user event (such as touchesBegan)
       // or we use the view's internal timer, we must always update state via renderTriangles()
@@ -175,7 +176,9 @@ class MTKViewDelaunayTriangulation: MTKView {
     // set up initial bg triangles
     vertexCloud2D = [] // empty out simple vertex array
     vertexCloud3DColor = [] // empty out vertex array
+    delaunayTriangles = [] // empty out triangle array
     
+    /*
     let v0 = Vertex2DSimple(x: 0.0, y:   0.0) // ul
     let v1 = Vertex2DSimple(x: self.bounds.size.width, y: 0.0) // ur
     let v2 = Vertex2DSimple(x: 0.0, y: self.bounds.size.height) // ll
@@ -189,10 +192,67 @@ class MTKViewDelaunayTriangulation: MTKView {
     vertexCloud2D.append(v2)
     vertexCloud2D.append(v3)
     
+    delaunayCompute() */
+    
+    setupVerticesBbox()
+    setupVerticesRandom(numVertices: 5)
     delaunayCompute()
     
     
   } // end of func setupBackground
+  
+  func setupVerticesBbox() {
+    
+    let v0 = Vertex2DSimple(x: 0.0, y:   0.0) // ul
+    let v1 = Vertex2DSimple(x: self.bounds.size.width, y: 0.0) // ur
+    let v2 = Vertex2DSimple(x: 0.0, y: self.bounds.size.height) // ll
+    let v3 = Vertex2DSimple(x: self.bounds.size.width, y: self.bounds.size.height) // lr
+    
+    vertexCloud2D.append(v0)
+    vertexCloud2D.append(v1)
+    vertexCloud2D.append(v2)
+    vertexCloud2D.append(v3)
+    
+  }
+  
+  func setupVerticesRandom(numVertices: Int) {
+    //vertexCloud2D = []
+    for _ in 0 ... numVertices {
+      let x = CGFloat.random(-1.0, 1.0) * self.bounds.size.width
+      let y = CGFloat.random(-1.0, 1.0) * self.bounds.size.height
+      
+      let v = Vertex2DSimple(x: x, y: y)
+      
+      vertexCloud2D.append(v)
+    }
+    
+  } // end of func setupVerticesRandom()
+  
+  func delaunayFindTriangleForPoint(p: CGPoint) -> Triangle {
+    var cnt = 0
+    var searchActive = true
+    
+    while searchActive {
+      let triangle = delaunayTriangles[cnt]
+      if triangle.containsPoint(point: p) {
+        searchActive = false // stop search.  we've found our guy
+        print ("......\(cnt) :: \(p) : \(triangle.vertex1) \(triangle.vertex2) \(triangle.vertex3)")
+        return triangle
+      } // end of if
+      cnt += 1
+    } // end of while
+    
+    /*
+    for triangle in delaunayTriangles {
+      if triangle.containsPoint(point: p) {
+        cnt += 1        
+        print ("......\(cnt) :: \(p) : \(triangle.vertex1) \(triangle.vertex2) \(triangle.vertex1)")
+      }
+      
+    } // end of for
+    */
+    
+  } // end of func delaunayFindTriangle()
   
   func vertexAppend (point: CGPoint) {
     let v = Vertex2DSimple(x: point.x, y: point.y)
@@ -202,11 +262,11 @@ class MTKViewDelaunayTriangulation: MTKView {
   
   func delaunayCompute () {
     vertexCloud3DColor = [] // empty out vertex array
-
-    let triangles = Delaunay().triangulate(vertexCloud2D)
-    triangleCount = triangles.count
+    delaunayTriangles = [] // emtpy out triangle array
+    delaunayTriangles = Delaunay().triangulate(vertexCloud2D)
+    triangleCount = delaunayTriangles.count
     print ("...[MTKViewDelaunayTriangulation] triangle count: \(triangleCount)")
-    for triangle in triangles {
+    for triangle in delaunayTriangles {
       // convert triangle vertices from device units to metal units
       let x1 = Float(triangle.vertex1.x)/Float(self.bounds.size.width)*2.0 - 1.0
       let x2 = Float(triangle.vertex2.x)/Float(self.bounds.size.width)*2.0 - 1.0
@@ -227,6 +287,9 @@ class MTKViewDelaunayTriangulation: MTKView {
     } // end of for triangles
     print ("...[MTKViewDelaunayTriangulation] [v] size = \(vertexCloud2D.count) [vc] size = \(vertexCloud3DColor.count)")
   }
+  
+  
+  
   
   func setupTrianglesRandom(numTriangles: Int){
 
@@ -275,21 +338,12 @@ class MTKViewDelaunayTriangulation: MTKView {
     
     
     
-    let triangles = Delaunay().triangulate(vertexCloud2D)
-    triangleCount = triangles.count
+    delaunayTriangles = Delaunay().triangulate(vertexCloud2D)
+    triangleCount = delaunayTriangles.count
     
     
-    for triangle in triangles {
-      /*
-      // convert triangle vertices from device units to metal units
-      let x1 = Float(triangle.vertex1.x)/Float(self.bounds.size.width)*2.0 - 1.0
-      let x2 = Float(triangle.vertex2.x)/Float(self.bounds.size.width)*2.0 - 1.0
-      let x3 = Float(triangle.vertex3.x)/Float(self.bounds.size.width)*2.0 - 1.0
-      
-      let y1 = Float(triangle.vertex1.y)/Float(self.bounds.size.height)*2.0 - 1.0
-      let y2 = Float(triangle.vertex2.y)/Float(self.bounds.size.height)*2.0 - 1.0
-      let y3 = Float(triangle.vertex3.y)/Float(self.bounds.size.height)*2.0 - 1.0
-      */
+    for triangle in delaunayTriangles {
+
       let x1 = Float(triangle.vertex1.x)
       let x2 = Float(triangle.vertex2.x)
       let x3 = Float(triangle.vertex3.x)
